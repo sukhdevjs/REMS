@@ -5,6 +5,7 @@ import com.sukhdev.rems.dto.UserDto;
 import com.sukhdev.rems.entity.User;
 import com.sukhdev.rems.enums.UserRole;
 import com.sukhdev.rems.repository.UserRepository;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -20,6 +21,19 @@ public class AuthServiceImpl implements AuthService{
         this.userRepository = userRepository;
     }
 
+    @PostConstruct
+    public void createAdminAccount(){
+        User adminAccount = userRepository.findByUserRole(UserRole.ADMIN);
+        if (adminAccount == null){
+            User newAdmin = new User();
+            newAdmin.setUserRole(UserRole.ADMIN);
+//            newAdmin.setName("Admin");
+            newAdmin.setEmail("admin@gmail.com");
+            newAdmin.setPassword(new BCryptPasswordEncoder().encode("Password"));
+            userRepository.save(newAdmin);
+        }
+
+    }
 
     @Override
     public UserDto createCustomer(SignupRequest signupRequest) {
