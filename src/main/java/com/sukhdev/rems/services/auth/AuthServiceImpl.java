@@ -7,6 +7,8 @@ import com.sukhdev.rems.enums.UserRole;
 import com.sukhdev.rems.repository.UserRepository;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -17,23 +19,43 @@ public class AuthServiceImpl implements AuthService{
     @Autowired
     private final UserRepository userRepository;
 
-    public AuthServiceImpl(UserRepository userRepository) {
+    @Autowired
+    private final BCryptPasswordEncoder passwordEncoder;
+
+    public AuthServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
-    @PostConstruct
-    public void createAdminAccount(){
+    @EventListener(ApplicationReadyEvent.class)
+    public void createAdminAccount() {
         User adminAccount = userRepository.findByUserRole(UserRole.ADMIN);
-        if (adminAccount == null){
+        if (adminAccount == null) {
             User newAdmin = new User();
             newAdmin.setUserRole(UserRole.ADMIN);
-//            newAdmin.setName("Admin");
             newAdmin.setEmail("admin@gmail.com");
-            newAdmin.setPassword(new BCryptPasswordEncoder().encode("Password"));
+            newAdmin.setPassword(passwordEncoder.encode("Password"));
             userRepository.save(newAdmin);
+            System.out.println("Admin account created successfully.");
+        } else {
+            System.out.println("Admin account already exists.");
         }
-
     }
+
+
+//    @PostConstruct
+//    public void createAdminAccount(){
+//        User adminAccount = userRepository.findByUserRole(UserRole.ADMIN);
+//        if (adminAccount == null){
+//            User newAdmin = new User();
+//            newAdmin.setUserRole(UserRole.ADMIN);
+////            newAdmin.setName("Admin");
+//            newAdmin.setEmail("admin@gmail.com");
+//            newAdmin.setPassword(new BCryptPasswordEncoder()
+//                            .encode("Password"));
+//            userRepository.save(newAdmin);
+//        }
+//    }
 
     @Override
     public UserDto createCustomer(SignupRequest signupRequest) {
@@ -50,7 +72,6 @@ public class AuthServiceImpl implements AuthService{
         userDto.setUserRole(createdUser.getUserRole());
         return userDto;
     }
-
     @Override
     public boolean hasCustomerWithEmail(String email){
     return userRepository.findFirstByEmail(email).isPresent();
