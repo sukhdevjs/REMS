@@ -43,20 +43,6 @@ public class AuthServiceImpl implements AuthService{
     }
 
 
-//    @PostConstruct
-//    public void createAdminAccount(){
-//        User adminAccount = userRepository.findByUserRole(UserRole.ADMIN);
-//        if (adminAccount == null){
-//            User newAdmin = new User();
-//            newAdmin.setUserRole(UserRole.ADMIN);
-////            newAdmin.setName("Admin");
-//            newAdmin.setEmail("admin@gmail.com");
-//            newAdmin.setPassword(new BCryptPasswordEncoder()
-//                            .encode("Password"));
-//            userRepository.save(newAdmin);
-//        }
-//    }
-
     @Override
     public UserDto createCustomer(SignupRequest signupRequest) {
         User user = new User();
