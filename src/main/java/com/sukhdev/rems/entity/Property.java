@@ -1,5 +1,8 @@
 package com.sukhdev.rems.entity;
 
+import com.sukhdev.rems.dto.PropertyDto;
+import com.sukhdev.rems.enums.LocationType;
+import com.sukhdev.rems.enums.PropertyType;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -14,7 +17,12 @@ public class Property {
 
     private String name;
 
-    private String type;
+    @Enumerated(EnumType.STRING)
+    private PropertyType propertyType;
+
+    @Enumerated(EnumType.STRING)
+    private LocationType locationType;
+
 
     private String address;
 
@@ -29,6 +37,19 @@ public class Property {
 
     @Column(columnDefinition = "longblob")
     private byte[] image;
+
+    public PropertyDto getPropertyDto(){
+        PropertyDto propertyDto = new PropertyDto();
+        propertyDto.setId(id);
+        propertyDto.setName(name);
+        propertyDto.setDescription(description);
+        propertyDto.setPropertyType(propertyType);
+        propertyDto.setLocationType(locationType);
+        propertyDto.setAddress(address);
+        propertyDto.setPrice(price);
+        propertyDto.setReturnedImage(image);
+        return propertyDto;
+    }
 
 
 }
