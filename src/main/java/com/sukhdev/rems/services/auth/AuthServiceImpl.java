@@ -5,13 +5,19 @@ import com.sukhdev.rems.dto.UserDto;
 import com.sukhdev.rems.entity.User;
 import com.sukhdev.rems.enums.UserRole;
 import com.sukhdev.rems.repository.UserRepository;
+//import com.sukhdev.rems.services.utils.JwtService;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
+
+
+import java.util.List;
 
 @Service
 public class AuthServiceImpl implements AuthService{
@@ -25,9 +31,12 @@ public class AuthServiceImpl implements AuthService{
     public AuthServiceImpl(UserRepository userRepository, BCryptPasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+
+
     }
 
-    @EventListener(ApplicationReadyEvent.class)
+//    @EventListener(ApplicationReadyEvent.class)
+    @PostConstruct
     public void createAdminAccount() {
         User adminAccount = userRepository.findByUserRole(UserRole.ADMIN);
         if (adminAccount == null) {
@@ -36,9 +45,9 @@ public class AuthServiceImpl implements AuthService{
             newAdmin.setEmail("admin@gmail.com");
             newAdmin.setPassword(passwordEncoder.encode("Password"));
             userRepository.save(newAdmin);
-            System.out.println("Admin account created successfully.");
-        } else {
-            System.out.println("Admin account already exists.");
+//            System.out.println("Admin account created successfully.");
+//        } else {
+//            System.out.println("Admin account already exists.");
         }
     }
 
