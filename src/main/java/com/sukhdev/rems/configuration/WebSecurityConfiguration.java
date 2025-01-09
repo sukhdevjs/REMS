@@ -28,46 +28,30 @@ public class WebSecurityConfiguration {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
-    private  final UserService userService;
+    private final UserService userService;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable).authorizeHttpRequests(request ->
                         request.requestMatchers("api/auth/**").permitAll().
+//                                requestMatchers("api/admin/**").permitAll().
                                 requestMatchers("/api/admin/**").hasAnyAuthority(UserRole.ADMIN.name()).
-//                                requestMatchers("/api/admin/**").permitAll().
-                                requestMatchers("/api/auth/user/**").hasAnyAuthority(UserRole.CUSTOMER.name()).
+                        requestMatchers("/api/user/**").hasAnyAuthority(UserRole.CUSTOMER.name()).
                                 anyRequest().authenticated()).sessionManagement(manager ->
                         manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)).
                 authenticationProvider(authenticationProvider()).
                 addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
-//@Bean
-//public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-//    http.csrf(AbstractHttpConfigurer::disable)
-//            .authorizeHttpRequests(request ->
-//                    request
-//                            .requestMatchers("/**").permitAll() // Allow access to all routes
-//                            .requestMatchers("/api/admin/**").hasAuthority("ADMIN") // Restrict admin routes
-//            )
-//            .sessionManagement(manager ->
-//                    manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//            )
-//            .authenticationProvider(authenticationProvider())
-//            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//
-//    return http.build();
-//}
 
 
     @Bean
-    public PasswordEncoder passwordEncoder(){
-        return  new BCryptPasswordEncoder();
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
     }
 
     @Bean
-    public AuthenticationProvider authenticationProvider(){
+    public AuthenticationProvider authenticationProvider() {
         DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
         authProvider.setUserDetailsService(userService.userDetailsService());
         authProvider.setPasswordEncoder(passwordEncoder());
@@ -75,33 +59,8 @@ public class WebSecurityConfiguration {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception{
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
         return config.getAuthenticationManager();
     }
 
-
-//    @Bean
-//    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-//
-//        http.csrf(AbstractHttpConfigurer::disable) // Disable CSRF protection
-////                .exceptionHandling(exception ->
-////                        exception.authenticationEntryPoint(unauthorizedHandler))
-//
-//                .sessionManagement(session ->
-//                        session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-//
-//                .authorizeHttpRequests(auth -> auth
-//                        .requestMatchers("/api/auth/users").permitAll()
-//                        .requestMatchers("/api/auth/**").permitAll()
-//                        .anyRequest().permitAll());
-//
-//
-//        http.authenticationProvider(authenticationProvider()); // Set the authentication provider
-//
-//
-////        http.addFilterBefore(authenticationJwtTokenFilter(),
-////                UsernamePasswordAuthenticationFilter.class);
-//
-//        return http.build();
-//    }
 }
