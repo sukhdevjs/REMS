@@ -38,4 +38,10 @@ public class AdminController {
         List<PropertyDto> propertyDtoList  = adminService.getAllProperty();
         return ResponseEntity.ok(propertyDtoList);
     }
+
+    @DeleteMapping("/property/{propertyId}")
+    public ResponseEntity<Void> deleteProperty(@PathVariable Long propertyId){
+        adminService.deleteProperty(propertyId);
+        return ResponseEntity.noContent().build();
+    }
 }
