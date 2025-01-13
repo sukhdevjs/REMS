@@ -9,4 +9,6 @@ public interface AdminService {
     boolean postProperty(PropertyDto propertyDto);
 
     List<PropertyDto> getAllProperty();
+
+    void deleteProperty(Long propertyId);
 }
