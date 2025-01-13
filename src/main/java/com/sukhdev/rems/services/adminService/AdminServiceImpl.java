@@ -43,4 +43,9 @@ public class AdminServiceImpl implements AdminService{
         return propertyRepository.findAll().stream().
                 map(Property::getPropertyDto).collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteProperty(Long propertyId) {
+    propertyRepository.deleteById(propertyId);
+    }
 }
