@@ -9,12 +9,14 @@ import lombok.extern.log4j.Log4j2;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class AdminServiceImpl implements AdminService{
+
 
     private final PropertyRepository propertyRepository;
 
@@ -47,5 +49,11 @@ public class AdminServiceImpl implements AdminService{
     @Override
     public void deleteProperty(Long propertyId) {
     propertyRepository.deleteById(propertyId);
+    }
+
+    @Override
+    public PropertyDto getPropertyById(Long propertyId) {
+        Optional<Property> optionalProperty = propertyRepository.findById(propertyId);
+        return optionalProperty.map(Property::getPropertyDto).orElse(null);
     }
 }
