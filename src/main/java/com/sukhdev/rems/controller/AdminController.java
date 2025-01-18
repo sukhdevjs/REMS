@@ -44,4 +44,11 @@ public class AdminController {
         adminService.deleteProperty(propertyId);
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping("/property/{propertyId}")
+    public ResponseEntity<PropertyDto> getCarById(@PathVariable Long propertyId){
+        PropertyDto propertyDto = adminService.getPropertyById(propertyId);
+        if (propertyDto != null) return ResponseEntity.ok(propertyDto);
+        return ResponseEntity.notFound().build();
+    }
 }
