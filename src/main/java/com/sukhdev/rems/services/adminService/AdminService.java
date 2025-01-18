@@ -11,4 +11,6 @@ public interface AdminService {
     List<PropertyDto> getAllProperty();
 
     void deleteProperty(Long propertyId);
+
+    PropertyDto  getPropertyById( Long propertyId);
 }
